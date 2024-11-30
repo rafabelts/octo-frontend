@@ -2,11 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+* {
+    padding: 0;
+    margin: 0;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+main {
+    padding: 10px;
+}
+
+h1 {
+    @apply text-neutral-normal text-h1 font-bold;
+}
+
+p {
+    @apply text-title2 text-neutral-normal;
 }

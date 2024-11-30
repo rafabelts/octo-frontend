@@ -1,0 +1,20 @@
+import { Button } from '~/components/button';
+
+export default function SignUpScreen() {
+  return (
+    <main id="signup-screen" className="flex flex-col h-screen justify-start">
+      <h1 className="text-h1 ">¡Hola!</h1>
+      <p>Rellena los siguientes campos para continuar</p>
+
+      <form>
+        <Button
+          id="signup-button"
+          label="Continuar"
+          color="bg-primary-normalHover"
+          fontColor="text-neutral-darker"
+          fontSize="text-title1"
+        />
+      </form>
+    </main>
+  );
+}
