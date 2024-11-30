@@ -1,7 +1,7 @@
 import { FieldValues } from 'react-hook-form';
-// import { FormFieldProps } from '../../types';
+import { FormFieldProps } from '~/types';
 
-export function FormField<FD extends FieldValues>({
+export function TextInput<FD extends FieldValues>({
   type,
   placeholder,
   name,
@@ -12,11 +12,12 @@ export function FormField<FD extends FieldValues>({
   return (
     <div>
       <input
+        className="text-title2 font-medium border-neutral-lightActive border p-2 w-full rounded-lg"
         type={type}
         placeholder={placeholder}
         {...register(name, { required: true, valueAsNumber })}
       />
-      {error && <p>{error.message}</p>}
+      {error && <p className="text-body text-error-normal"> {error.message}</p>}
     </div>
   );
 }

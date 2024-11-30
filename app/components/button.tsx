@@ -8,11 +8,11 @@ interface ButtonProps {
 
 export function Button(props: ButtonProps) {
   return (
-    <div
+    <button
       id={props.id}
       className={`w-full flex justify-center p-2 rounded-lg ${props.bgColor}  ${props.fontSize}`}
     >
       <p className={`${props.fontColor} font-semibold`}>{props.label}</p>
-    </div>
+    </button>
   );
 }

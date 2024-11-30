@@ -3,26 +3,19 @@ import { Button } from '~/components/button';
 import { TextInput } from '~/components/text-input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormFieldProps, SignUpData } from '~/types';
-import { signUpSchema } from '~/form-validators';
+import { FormFieldProps, LogInData, SignUpData } from '~/types';
+import { logInSchema, signUpSchema } from '~/form-validators';
 
-export default function SignUpScreen() {
+export default function LogInScreen() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof signUpSchema>>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<z.infer<typeof logInSchema>>({
+    resolver: zodResolver(logInSchema),
   });
 
-  const signUpFields: Array<FormFieldProps<SignUpData>> = [
-    {
-      type: 'text',
-      placeholder: 'Nombre',
-      name: 'name',
-      register: register,
-      error: errors.name,
-    },
+  const logInFields: Array<FormFieldProps<LogInData>> = [
     {
       type: 'text',
       placeholder: 'Correo electrónico',
@@ -30,6 +23,7 @@ export default function SignUpScreen() {
       register: register,
       error: errors.email,
     },
+
     {
       type: 'password',
       placeholder: 'Contraseña',
@@ -37,16 +31,9 @@ export default function SignUpScreen() {
       register: register,
       error: errors.password,
     },
-    {
-      type: 'password',
-      placeholder: 'Confirmar contraseña',
-      name: 'confirmPassword',
-      register: register,
-      error: errors.confirmPassword,
-    },
   ];
 
-  const onSubmit = (data: SignUpData) => {
+  const onSubmit = (data: LogInData) => {
     //    const loadingToast = toast.loading('Añadiendo libro...');
     console.log(data);
   };
@@ -54,14 +41,14 @@ export default function SignUpScreen() {
   return (
     <main id="signup-screen" className="flex flex-col h-screen">
       <h1 className="text-h1 ">¡Hola!</h1>
-      <p>Rellena los siguientes campos para continuar</p>
+      <p>Ingresa tus datos para continuar</p>
       <form
         onSubmit={handleSubmit(onSubmit)}
         id="signup-form"
         className="flex flex-col mt-6"
       >
-        <div className="flex flex-col gap-5 mb-2">
-          {signUpFields.map((field) => (
+        <div className="flex flex-col gap-5 mb-3">
+          {logInFields.map((field) => (
             <TextInput
               key={field.name}
               type={field.type}
@@ -73,11 +60,9 @@ export default function SignUpScreen() {
             />
           ))}
         </div>
-
-        <span className="text-caption text-neutral-normal mb-8">
-          Al continuar, aceptas nuestro <b>Acuerdo de Usuario</b> y reconoces
-          que comprendes la <b>Política de Privacidad</b>
-        </span>
+        <p className="mb-10 text-body font-bold text-primary-darker text-right">
+          Olvide mi contraseña
+        </p>
 
         <Button
           id="signup-button"
