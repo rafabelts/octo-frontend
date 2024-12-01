@@ -14,6 +14,7 @@ export default {
       body: '14px',
       caption: '12px',
     },
+
     colors: {
       primary: {
         light: '#f1effa',

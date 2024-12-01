@@ -3,10 +3,11 @@ import { Button } from '~/components/button';
 import { TextInput } from '~/components/text-input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormFieldProps, LogInData, SignUpData } from '~/types';
-import { logInSchema, signUpSchema } from '~/form-validators';
+import { FormFieldProps, LogInData } from '~/types';
+import { logInSchema } from '~/form-validators';
+import { BackButton } from '~/components/back-button';
 
-export default function LogInScreen() {
+export function LogInScreen() {
   const {
     register,
     handleSubmit,
@@ -39,39 +40,45 @@ export default function LogInScreen() {
   };
 
   return (
-    <main id="signup-screen" className="flex flex-col h-screen">
-      <h1 className="text-h1 ">¡Hola!</h1>
-      <p>Ingresa tus datos para continuar</p>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        id="signup-form"
-        className="flex flex-col mt-6"
-      >
-        <div className="flex flex-col gap-5 mb-3">
-          {logInFields.map((field) => (
-            <TextInput
-              key={field.name}
-              type={field.type}
-              placeholder={field.placeholder}
-              name={field.name}
-              register={field.register}
-              error={field.error}
-              valueAsNumber={field.valueAsNumber}
-            />
-          ))}
-        </div>
-        <p className="mb-10 text-body font-bold text-primary-darker text-right">
-          Olvide mi contraseña
-        </p>
+    <div id="signup-screen" className="flex flex-col h-screen">
+      <div className="mt-5 mb-2">
+        <BackButton path="/" />
+      </div>
 
-        <Button
-          id="signup-button"
-          label="Continuar"
-          bgColor="bg-primary-normalHover"
-          fontColor="text-neutral-light"
-          fontSize="text-title1"
-        />
-      </form>
-    </main>
+      <main>
+        <h1 className="text-h1 ">¡Hola!</h1>
+        <p>Ingresa tus datos para continuar</p>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          id="signup-form"
+          className="flex flex-col mt-6"
+        >
+          <div className="flex flex-col gap-5 mb-3">
+            {logInFields.map((field) => (
+              <TextInput
+                key={field.name}
+                type={field.type}
+                placeholder={field.placeholder}
+                name={field.name}
+                register={field.register}
+                error={field.error}
+                valueAsNumber={field.valueAsNumber}
+              />
+            ))}
+          </div>
+          <p className="mb-10 text-body font-bold text-primary-darker text-right">
+            Olvide mi contraseña
+          </p>
+
+          <Button
+            id="signup-button"
+            label="Continuar"
+            bgColor="bg-primary-normalHover"
+            fontColor="text-neutral-light"
+            fontSize="text-title1"
+          />
+        </form>
+      </main>
+    </div>
   );
 }

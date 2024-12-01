@@ -5,6 +5,8 @@ import {
   Path,
 } from 'react-hook-form';
 
+export type CanBeNull<T> = T | null | undefined;
+
 // VF for the valid form names and FD for the field values (example, the BookFormData interface)
 export interface FormFieldProps<FD extends FieldValues> {
   type: string;
