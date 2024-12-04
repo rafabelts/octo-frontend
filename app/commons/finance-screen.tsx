@@ -87,7 +87,7 @@ export function FinanceScreen({ tab }: { tab: number }) {
         )}
       </div>
 
-      <div id="expenses-resume">
+      <div id="expenses-resume" className="mb-4">
         <h2 className="text-title1 font-bold text-primary-darkActive mt-4">
           Resumen:
         </h2>
@@ -98,9 +98,12 @@ export function FinanceScreen({ tab }: { tab: number }) {
         </ul>
       </div>
 
-      <p className="mt-8 text-body text-primary-normal font-bold">
+      <Link
+        to="/finances/categories"
+        className="text-body text-primary-normal font-bold"
+      >
         Ver mas &gt;
-      </p>
+      </Link>
 
       <Link to="/finances/add">
         <button className="fixed bottom-6 right-1 w-14 h-14 bg-[#725CC9] rounded-full flex items-center justify-center">

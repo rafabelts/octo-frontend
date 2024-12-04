@@ -1,10 +1,11 @@
 import { useAppContext } from '~/context/ctxt';
+import { CanBeNull } from '~/types';
 
 interface CategoryButtonProps {
   icon: string;
-  label: string;
+  name: string;
   color: string;
-  onClick: () => void;
+  onClick: CanBeNull<() => void>;
 }
 
 export function CategoryButton(props: CategoryButtonProps) {
@@ -13,19 +14,19 @@ export function CategoryButton(props: CategoryButtonProps) {
     <button
       type="button"
       className={`flex flex-col items-center justify-center py-2 rounded ${
-        props.label === ctx!.categorySelected
+        props.name === ctx!.categorySelected
           ? '' // No background color class here, as we'll use inline styles
           : 'bg-[#9B9B9B]'
       }`}
       style={{
         backgroundColor:
-          props.label === ctx!.categorySelected ? props.color : undefined,
+          props.name === ctx!.categorySelected ? props.color : undefined,
       }}
-      onClick={props.onClick}
+      onClick={props.onClick!}
     >
       <p>{props.icon}</p>
       <p className="text-caption text-center text-neutral-light font-bold">
-        {props.label}
+        {props.name}
       </p>
     </button>
   );

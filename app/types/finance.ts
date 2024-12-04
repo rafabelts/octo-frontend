@@ -11,7 +11,7 @@ export const financeSchema = z.object({
     }),
 }*/
 
-export interface FinanceData {
+export interface TransactionData {
   title: string;
   amount: number;
 }

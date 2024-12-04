@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormFieldProps, SignUpData } from '~/types';
 import { signUpSchema } from '~/form-validators';
 import { BackButton } from '~/components/back-button';
+import { registerUser } from '~/services/auth';
 
 export function SignUpScreen() {
   const {
@@ -47,9 +48,8 @@ export function SignUpScreen() {
     },
   ];
 
-  const onSubmit = (data: SignUpData) => {
-    //    const loadingToast = toast.loading('Añadiendo libro...');
-    console.log(data);
+  const onSubmit = async (data: SignUpData) => {
+    await registerUser(data);
   };
 
   return (

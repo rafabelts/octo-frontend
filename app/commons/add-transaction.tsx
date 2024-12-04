@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { BackButton } from '~/components/back-button';
@@ -7,11 +8,57 @@ import { CategoryButton } from '~/components/category-button';
 import { TextInput } from '~/components/text-input';
 import { useAppContext } from '~/context/ctxt';
 import { financeSchema } from '~/form-validators/finance-schema';
-import { FormFieldProps } from '~/types';
-import { FinanceData } from '~/types/finance';
+import { getUserCategories } from '~/services/categories';
+import { addTransaction } from '~/services/transactions';
+import { CanBeNull, FormFieldProps } from '~/types';
+import { TransactionData } from '~/types/finance';
+
+interface ResponseOfCategory {
+  categoryId: number;
+  color: string;
+  icon: string;
+  isActive: boolean | null;
+  name: string;
+  type: string;
+  user: number;
+  onClick: CanBeNull<() => void>;
+}
 
 export function AddTransactionScreen() {
   const ctx = useAppContext();
+
+  const [categories, setCategories] = useState<Array<ResponseOfCategory>>([]);
+
+  const filterByType = (obj: ResponseOfCategory, type: string) => {
+    if ('type' in obj && obj.type === type) {
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    async function getCategories(user: number) {
+      const categories = await getUserCategories(user);
+      const type = ctx?.activeTab === 0 ? 'expense' : 'income';
+
+      // filter categories by type
+      const filteredCategories = categories.filter(
+        (category: ResponseOfCategory) => filterByType(category, type)
+      );
+
+      // active the category
+      const updatedCategories = filteredCategories.map(
+        (category: ResponseOfCategory) => ({
+          ...category,
+          onClick: () => ctx?.updateCategorySelected(category.name),
+        })
+      );
+
+      setCategories(updatedCategories);
+    }
+
+    getCategories(10000);
+  }, []);
 
   const {
     register,
@@ -21,7 +68,7 @@ export function AddTransactionScreen() {
     resolver: zodResolver(financeSchema),
   });
 
-  const financeFields: Array<FormFieldProps<FinanceData>> = [
+  const financeFields: Array<FormFieldProps<TransactionData>> = [
     {
       type: 'text',
       placeholder: `Título del ${ctx?.activeTab === 0 ? 'gasto' : 'ingreso'}`,
@@ -39,59 +86,11 @@ export function AddTransactionScreen() {
     },
   ];
 
-  const onSubmit = (data: FinanceData) => {
-    console.log(data);
+  const onSubmit = async (data: TransactionData) => {
+    const type = ctx?.activeTab === 0 ? 'expense' : 'income';
+
+    await addTransaction(data, type, 10000, 10003);
   };
-
-  const categories =
-    ctx?.activeTab === 0
-      ? [
-          {
-            icon: '🥘',
-            label: 'Alimentos',
-            color: '#B91F1F',
-            onClick: () => ctx?.updateCategorySelected('Alimentos'),
-          },
-          {
-            icon: '🏥',
-            label: 'Salud e higiene',
-            color: '#281F3D',
-
-            onClick: () => ctx?.updateCategorySelected('Salud e higiene'),
-          },
-          {
-            icon: '🧾',
-            label: 'Servicios',
-            color: '#755BD0',
-            onClick: () => ctx?.updateCategorySelected('Servicios'),
-          },
-          {
-            icon: '💻',
-            label: 'Trabajo',
-            color: '#FFCE1F',
-            onClick: () => ctx?.updateCategorySelected('Trabajo'),
-          },
-        ]
-      : [
-          {
-            icon: '💻',
-            label: 'Suscripciones',
-            color: '#FFCE1F',
-            onClick: () => ctx?.updateCategorySelected('Suscripciones'),
-          },
-          {
-            icon: '📈',
-            label: 'Inversiones',
-            color: '#281F3D',
-            onClick: () => ctx?.updateCategorySelected('Inversiones'),
-          },
-          {
-            icon: '💲',
-            label: 'Otros',
-            color: '#D4CCF0',
-            onClick: () => ctx?.updateCategorySelected('Otros'),
-          },
-        ];
 
   return (
     <div>
@@ -121,7 +120,7 @@ export function AddTransactionScreen() {
           </h2>
           <div className="grid grid-cols-4 mb-10 gap-2">
             {categories.map((category) => (
-              <CategoryButton key={category.label} {...category} />
+              <CategoryButton key={category.name} {...category} />
             ))}
           </div>
 
