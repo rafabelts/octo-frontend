@@ -7,8 +7,11 @@ import { FormFieldProps, SignUpData } from '~/types';
 import { signUpSchema } from '~/form-validators';
 import { BackButton } from '~/components/back-button';
 import { registerUser } from '~/services/auth';
+import { useNavigate } from '@remix-run/react';
 
 export function SignUpScreen() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -50,6 +53,11 @@ export function SignUpScreen() {
 
   const onSubmit = async (data: SignUpData) => {
     await registerUser(data);
+    const userId = await registerUser(data);
+    if (userId) {
+      sessionStorage.setItem('user_id', userId);
+      navigate('/finance');
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useParams } from '@remix-run/react';
+import { useNavigate, useParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { BackButton } from '~/components/back-button';
 import { useAppContext } from '~/context/ctxt';
@@ -12,7 +12,7 @@ export default function CategoryScreen() {
   const [transactions, setTransactions] = useState<
     Array<ResponseOfTransactions>
   >([]);
-
+  const navigate = useNavigate();
   const ctx = useAppContext();
 
   const { category } = useParams();
@@ -20,6 +20,9 @@ export default function CategoryScreen() {
   let content = <p>Loading...</p>;
 
   useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
+    if (!userId) navigate('/');
+
     const type = ctx?.activeTab === 0 ? 'expense' : 'income';
 
     // get categories
@@ -87,7 +90,7 @@ export default function CategoryScreen() {
           Resumen:
         </p>
         {transactions.length === 0 ? (
-          <p>No se han registrado transacciones para la categoría</p>
+          <p>No se han realizado movimientos</p>
         ) : (
           <div className="flex flex-col gap-5 mt-2">
             {transactions.map((transaction: ResponseOfTransactions) => (

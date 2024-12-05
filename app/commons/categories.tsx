@@ -1,3 +1,4 @@
+import { useNavigate } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { BackButton } from '~/components/back-button';
 import { Button } from '~/components/button';
@@ -7,11 +8,15 @@ import { ResponseOfCategory } from '~/types/category';
 import { filterByType } from '~/utils/filterByType';
 
 export function CategoriesScreen() {
+  const navigate = useNavigate();
   const ctx = useAppContext();
 
   const [categories, setCategories] = useState<Array<ResponseOfCategory>>([]);
 
   useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
+    if (!userId) navigate('/');
+
     const type = ctx?.activeTab === 0 ? 'expense' : 'income';
     const fetchedCategories = sessionStorage.getItem('user_categories');
 
@@ -69,27 +74,28 @@ export function CategoriesScreen() {
           })}
         </div>
 
-        <div
-          className="flex flex-row gap-3"
-          style={{ marginTop: 'auto' }}
-          id="more-info-buttons"
-        >
-          <Button
-            id="create-account-button"
-            label="Informes pasados"
-            border="border border-primary-normalHover"
-            bgColor=""
-            fontColor="text-primary-normalHover"
-            fontSize="text-title1"
-          />
-          <Button
-            id="create-account-button"
-            label="Generar reporte"
-            bgColor="bg-primary-normalHover"
-            fontColor="text-neutral-light"
-            fontSize="text-title1"
-          />
-        </div>
+        {/*
+          <div
+            className="flex flex-row gap-3"
+            style={{ marginTop: 'auto' }}
+            id="more-info-buttons"
+          >
+            <Button
+              id="create-account-button"
+              label="Informes pasados"
+              border="border border-primary-normalHover"
+              bgColor=""
+              fontColor="text-primary-normalHover"
+              fontSize="text-title1"
+            />
+            <Button
+              id="create-account-button"
+              label="Generar reporte"
+              bgColor="bg-primary-normalHover"
+              fontColor="text-neutral-light"
+              fontSize="text-title1"
+            />
+          </div>*/}
       </main>
     </div>
   );

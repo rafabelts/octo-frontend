@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,12 +16,16 @@ import { TransactionData } from '~/types/finance';
 import { filterByType } from '~/utils/filterByType';
 
 export function AddTransactionScreen() {
+  const navigate = useNavigate();
   const ctx = useAppContext();
 
   const [categories, setCategories] = useState<Array<ResponseOfCategory>>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>();
 
   useEffect(() => {
+    const userId = sessionStorage.getItem('user_id');
+    if (!userId) navigate('/');
+
     const type = ctx?.activeTab === 0 ? 'expense' : 'income';
     const fetchedCategories = sessionStorage.getItem('user_categories');
 
@@ -76,6 +81,10 @@ export function AddTransactionScreen() {
   ];
 
   const onSubmit = async (data: TransactionData) => {
+    const userId = sessionStorage.getItem('user_id');
+
+    if (!userId) return navigate('/');
+
     const type = ctx?.activeTab === 0 ? 'expense' : 'income';
 
     if (selectedCategory === undefined) {
@@ -83,7 +92,9 @@ export function AddTransactionScreen() {
       return;
     }
 
-    await addTransaction(data, type, 10000, selectedCategory);
+    const parsedId = parseInt(userId);
+
+    await addTransaction(data, type, parsedId, selectedCategory);
   };
 
   return (

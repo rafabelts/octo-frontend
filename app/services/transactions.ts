@@ -57,7 +57,7 @@ export async function getUserTransactionsByCategory(
 ) {
   try {
     const response = await fetch(
-      `http://localhost:8080/api/transactions/category?userId=10000&categoryId=${category}`,
+      `http://localhost:8080/api/transactions/category?userId=${user}&categoryId=${category}`,
       {
         method: 'GET',
       }

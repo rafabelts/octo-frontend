@@ -6,8 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormFieldProps, LogInData } from '~/types';
 import { logInSchema } from '~/form-validators';
 import { BackButton } from '~/components/back-button';
+import { logIn } from '~/services/auth';
+import { useNavigate } from '@remix-run/react';
+import { useEffect } from 'react';
 
 export function LogInScreen() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -34,9 +39,12 @@ export function LogInScreen() {
     },
   ];
 
-  const onSubmit = (data: LogInData) => {
-    //    const loadingToast = toast.loading('Añadiendo libro...');
-    console.log(data);
+  const onSubmit = async (data: LogInData) => {
+    const userId = await logIn(data);
+    if (userId) {
+      sessionStorage.setItem('user_id', userId);
+      navigate('/finance');
+    }
   };
 
   return (
