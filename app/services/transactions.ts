@@ -31,3 +31,48 @@ export async function addTransaction(
     console.error('Error adding transaction');
   }
 }
+
+// user is number type because we are going to recive the id
+export async function getUserTransactions(user: number) {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/transactions?userId=${user}`,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (response.status === 200) {
+      const transactions = await response.json();
+      return transactions;
+    }
+  } catch {
+    console.error('Error loading transactions');
+  }
+}
+
+export async function getUserTransactionsByCategory(
+  user: number,
+  category: number
+) {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/transactions/category?userId=10000&categoryId=${category}`,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (response.status === 200) {
+      const transactions = await response.json();
+      console.log('hey: ', transactions);
+      return transactions;
+    }
+  } catch {
+    console.error('Error loading transactions');
+  }
+}
+
+/*
+
+*/

@@ -2,7 +2,7 @@ interface FinanceResumeListItemProps {
   categoryIcon: string;
   categoryColor: string;
   name: string;
-  total: string;
+  total: number;
 }
 
 export default function FinanceResumeListItem(
@@ -12,7 +12,10 @@ export default function FinanceResumeListItem(
     <li>
       <div className="flex flex-row justify-between items-stretch">
         <div className="flex flex-row gap-5">
-          <div className={`${props.categoryColor} px-1 rounded items-stretc`}>
+          <div
+            className={`px-1 rounded items-stretc`}
+            style={{ backgroundColor: props.categoryColor }}
+          >
             {props.categoryIcon}
           </div>
           <p>{props.name}</p>

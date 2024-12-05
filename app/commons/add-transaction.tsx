@@ -8,57 +8,46 @@ import { CategoryButton } from '~/components/category-button';
 import { TextInput } from '~/components/text-input';
 import { useAppContext } from '~/context/ctxt';
 import { financeSchema } from '~/form-validators/finance-schema';
-import { getUserCategories } from '~/services/categories';
 import { addTransaction } from '~/services/transactions';
-import { CanBeNull, FormFieldProps } from '~/types';
+import { FormFieldProps } from '~/types';
+import { ResponseOfCategory } from '~/types/category';
 import { TransactionData } from '~/types/finance';
-
-interface ResponseOfCategory {
-  categoryId: number;
-  color: string;
-  icon: string;
-  isActive: boolean | null;
-  name: string;
-  type: string;
-  user: number;
-  onClick: CanBeNull<() => void>;
-}
+import { filterByType } from '~/utils/filterByType';
 
 export function AddTransactionScreen() {
   const ctx = useAppContext();
 
   const [categories, setCategories] = useState<Array<ResponseOfCategory>>([]);
-
-  const filterByType = (obj: ResponseOfCategory, type: string) => {
-    if ('type' in obj && obj.type === type) {
-      return true;
-    }
-    return false;
-  };
+  const [selectedCategory, setSelectedCategory] = useState<number>();
 
   useEffect(() => {
-    async function getCategories(user: number) {
-      const categories = await getUserCategories(user);
-      const type = ctx?.activeTab === 0 ? 'expense' : 'income';
+    const type = ctx?.activeTab === 0 ? 'expense' : 'income';
+    const fetchedCategories = sessionStorage.getItem('user_categories');
 
-      // filter categories by type
-      const filteredCategories = categories.filter(
-        (category: ResponseOfCategory) => filterByType(category, type)
-      );
-
-      // active the category
-      const updatedCategories = filteredCategories.map(
-        (category: ResponseOfCategory) => ({
-          ...category,
-          onClick: () => ctx?.updateCategorySelected(category.name),
-        })
-      );
-
-      setCategories(updatedCategories);
+    if (!fetchedCategories) {
+      console.error('No categories fetched');
+      return;
     }
 
-    getCategories(10000);
-  }, []);
+    const parsedCategories = JSON.parse(fetchedCategories);
+
+    const filteredCategories = parsedCategories.filter(
+      (category: ResponseOfCategory) => filterByType(category, type)
+    );
+
+    // active the category
+    const updatedCategories = filteredCategories.map(
+      (category: ResponseOfCategory) => ({
+        ...category,
+        onClick: () => {
+          ctx?.updateCategorySelected(category.name);
+          setSelectedCategory(category.categoryId);
+        },
+      })
+    );
+
+    setCategories(updatedCategories);
+  }, [ctx?.activeTab]);
 
   const {
     register,
@@ -89,7 +78,12 @@ export function AddTransactionScreen() {
   const onSubmit = async (data: TransactionData) => {
     const type = ctx?.activeTab === 0 ? 'expense' : 'income';
 
-    await addTransaction(data, type, 10000, 10003);
+    if (selectedCategory === undefined) {
+      console.error('Category is missing');
+      return;
+    }
+
+    await addTransaction(data, type, 10000, selectedCategory);
   };
 
   return (

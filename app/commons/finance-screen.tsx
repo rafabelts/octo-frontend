@@ -1,71 +1,101 @@
 import { Link } from '@remix-run/react';
+import { toRadians } from 'chart.js/helpers';
 import { useEffect, useState } from 'react';
 import FinanceResumeListItem from '~/components/finance-resume-list-item';
 import { PieGraph } from '~/components/graph';
+import { getUserCategories } from '~/services/categories';
+import { getUserTransactions } from '~/services/transactions';
+import { ResponseOfCategory } from '~/types/category';
+import { ResponseOfTransactions } from '~/types/finance';
+import { filterByType } from '~/utils/filterByType';
 
 export function FinanceScreen({ tab }: { tab: number }) {
+  const [transactions, setTransactions] = useState<
+    Array<ResponseOfTransactions>
+  >([]);
+
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
       {
         label: 'Total gastado $',
         data: [],
-        backgroundColor: ['#B91F1F', '#281F3D', '#00863A', '#FFCE1F'],
       },
     ],
   });
 
   useEffect(() => {
-    const categories =
-      tab === 0
-        ? ['Alimentos', 'Salud e higiene', 'Suscripciones', 'Servicios']
-        : ['Trabajo', 'Inversiones', 'Otro'];
+    const type = tab === 0 ? 'expense' : 'income';
 
-    const ammountOfTransactions =
-      tab === 0 ? [200, 50, 500, 250] : [20000, 2000, 5000];
+    async function getTransactionsAndCategories(user: number) {
+      const categories = await getUserCategories(user);
+      const transactions = await getUserTransactions(user);
 
-    setChartData({
-      labels: categories,
-      datasets: [
-        {
-          label: 'Total gastado $',
-          data: ammountOfTransactions,
+      const filteredTransactions = transactions.filter(
+        (transaction: ResponseOfTransactions) => filterByType(transaction, type)
+      );
 
-          backgroundColor:
-            tab === 0
-              ? ['#B91F1F', '#281F3D', '#00863A', '#FFCE1F']
-              : ['#FFCE1F', '#281F3D', '#D4CCF0'],
-        },
-      ],
-    });
+      setTransactions(filteredTransactions);
+      sessionStorage.setItem('user_categories', JSON.stringify(categories));
+
+      const fetchedCategories = sessionStorage.getItem('user_categories');
+
+      if (!fetchedCategories) {
+        console.error('No categories fetched');
+        return;
+      }
+
+      const parsedCategories = JSON.parse(fetchedCategories);
+
+      const filteredCategories = parsedCategories.filter(
+        (category: ResponseOfCategory) => filterByType(category, type)
+      );
+
+      // get categories names and colors
+      const categoriesName = filteredCategories.map(
+        (fc: ResponseOfCategory) => fc.name
+      );
+      const categoriesColor = filteredCategories.map(
+        (fc: ResponseOfCategory) => fc.color
+      );
+
+      const categoriesAmount = filteredCategories.map(
+        (fc: ResponseOfCategory) => {
+          const transactions = filteredTransactions.filter(
+            (t: ResponseOfTransactions) => t.category === fc.categoryId
+          );
+
+          const totalAmount = transactions.reduce(
+            (sum: number, transaction: ResponseOfTransactions) =>
+              sum + transaction.amount,
+            0
+          );
+
+          return totalAmount;
+        }
+      );
+
+      // Update chart data
+      setChartData({
+        labels: categoriesName,
+        datasets: [
+          {
+            label: tab === 0 ? 'Total gastado $' : 'Total ingresado $',
+            data: categoriesAmount,
+            backgroundColor: categoriesColor,
+          },
+        ],
+      });
+    }
+
+    getTransactionsAndCategories(10000);
   }, [tab]);
 
-  const expenses = [
-    {
-      categoryIcon: '🥘',
-      categoryColor: 'bg-[#B91F1F]',
-      name: 'Pizza',
-      total: '200',
-    },
-    {
-      categoryIcon: '🏥',
-      categoryColor: 'bg-[#281F3D]',
-      name: 'Pasta de dientes',
-      total: '50',
-    },
-    {
-      categoryIcon: '🧾',
-      categoryColor: 'bg-[#FFCE1F]',
-      name: 'Luz',
-      total: '500',
-    },
-    {
-      categoryIcon: '💻',
-      categoryColor: 'bg-[#00863A]',
-      name: 'Netflix',
-      total: '250',
-    },
-  ];
+  // calculate total amount
+  const totalAmount = transactions.reduce(
+    (total, transaction) => total + transaction.amount,
+    0
+  );
 
   return (
     <div id="finance-screen" className="mt-5">
@@ -75,16 +105,9 @@ export function FinanceScreen({ tab }: { tab: number }) {
       <div id="expenses-report-dashbord">
         <PieGraph chartData={chartData} />
         <p className="text-center mt-2 text-title2 font-bold text-primary-normalActive">
-          Total {tab === 0 ? 'gastado' : 'recibido'}: $1000
+          Total {tab === 0 ? 'gastado' : 'recibido'}: $
+          {`${totalAmount.toFixed(2)}`}
         </p>
-
-        {tab === 0 ? (
-          <></>
-        ) : (
-          <p className="text-center text-body">
-            Balance con lo gastado: $26,000
-          </p>
-        )}
       </div>
 
       <div id="expenses-resume" className="mb-4">
@@ -92,8 +115,14 @@ export function FinanceScreen({ tab }: { tab: number }) {
           Resumen:
         </h2>
         <ul className="flex flex-col gap-4 mt-2">
-          {expenses.map((expense, i) => (
-            <FinanceResumeListItem key={i} {...expense} />
+          {transactions.slice(0, 4).map((transaction) => (
+            <FinanceResumeListItem
+              key={transaction.transactionId}
+              categoryIcon={transaction.categoryIcon}
+              categoryColor={transaction.categoryColor}
+              name={transaction.title}
+              total={transaction.amount}
+            />
           ))}
         </ul>
       </div>

@@ -15,3 +15,16 @@ export interface TransactionData {
   title: string;
   amount: number;
 }
+
+export interface ResponseOfTransactions {
+  transactionId: number;
+  amount: number;
+  title: string;
+  type: string;
+  date: string;
+  user: number;
+  category: number;
+  isActive: boolean;
+  categoryIcon: string;
+  categoryColor: string;
+}

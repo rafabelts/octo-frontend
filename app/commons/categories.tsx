@@ -1,59 +1,33 @@
+import { useEffect, useState } from 'react';
 import { BackButton } from '~/components/back-button';
 import { Button } from '~/components/button';
 import { CategoryContainer } from '~/components/category-container';
 import { useAppContext } from '~/context/ctxt';
+import { ResponseOfCategory } from '~/types/category';
+import { filterByType } from '~/utils/filterByType';
 
 export function CategoriesScreen() {
   const ctx = useAppContext();
 
-  const categories =
-    ctx?.activeTab === 0
-      ? [
-          {
-            icon: '🥘',
-            label: 'Alimentos',
-            color: '#B91F1F',
-            path: '/finances/alimentos',
-          },
-          {
-            icon: '🏥',
-            label: 'Salud e higiene',
-            color: '#281F3D',
-            path: '/finances/salud',
-          },
-          {
-            icon: '🧾',
-            label: 'Servicios',
-            color: '#755BD0',
-            path: '/finances/servicios',
-          },
-          {
-            icon: '💻',
-            label: 'Trabajo',
-            color: '#FFCE1F',
-            path: '/finances/trabajo',
-          },
-        ]
-      : [
-          {
-            icon: '💻',
-            label: 'Suscripciones',
-            color: '#FFCE1F',
-            path: '/finances/suscripciones',
-          },
-          {
-            icon: '📈',
-            label: 'Inversiones',
-            color: '#281F3D',
-            path: '/finances/inversiones',
-          },
-          {
-            icon: '💲',
-            label: 'Otros',
-            color: '#D4CCF0',
-            path: '/finances/otros',
-          },
-        ];
+  const [categories, setCategories] = useState<Array<ResponseOfCategory>>([]);
+
+  useEffect(() => {
+    const type = ctx?.activeTab === 0 ? 'expense' : 'income';
+    const fetchedCategories = sessionStorage.getItem('user_categories');
+
+    if (!fetchedCategories) {
+      console.error('No categories fetched');
+      return;
+    }
+
+    const parsedCategories = JSON.parse(fetchedCategories);
+
+    const filteredCategories = parsedCategories.filter(
+      (category: ResponseOfCategory) => filterByType(category, type)
+    );
+
+    setCategories(filteredCategories);
+  }, [ctx?.activeTab]);
 
   return (
     <div>
@@ -80,15 +54,19 @@ export function CategoriesScreen() {
             margin: '0 auto',
           }}
         >
-          {categories.map((category) => (
-            <CategoryContainer
-              key={category.label}
-              icon={category.icon}
-              label={category.label}
-              color={category.color}
-              path={category.path}
-            />
-          ))}
+          {categories.map((category: ResponseOfCategory) => {
+            const path = category.name.split(' ')[0];
+
+            return (
+              <CategoryContainer
+                key={category.name}
+                icon={category.icon}
+                label={category.name}
+                color={category.color}
+                path={`/finances/${path.toLocaleLowerCase()}`}
+              />
+            );
+          })}
         </div>
 
         <div
