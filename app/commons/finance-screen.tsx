@@ -78,6 +78,14 @@ export function FinanceScreen({ tab }: { tab: number }) {
         }
       );
 
+      const movementsTotal = categoriesAmount.reduce(
+        (accumulated: number, currentValue: number) =>
+          accumulated + currentValue,
+        0
+      );
+
+      sessionStorage.setItem('movements_total', movementsTotal);
+
       // Update chart data
       setChartData({
         labels: categoriesName,

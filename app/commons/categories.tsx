@@ -12,6 +12,7 @@ export function CategoriesScreen() {
   const ctx = useAppContext();
 
   const [categories, setCategories] = useState<Array<ResponseOfCategory>>([]);
+  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
@@ -32,6 +33,12 @@ export function CategoriesScreen() {
     );
 
     setCategories(filteredCategories);
+
+    const movements_total = sessionStorage.getItem('movements_total');
+
+    if (movements_total) {
+      setTotal(parseFloat(movements_total));
+    }
   }, [ctx?.activeTab]);
 
   return (
@@ -49,7 +56,8 @@ export function CategoriesScreen() {
         <h1 className="mb-5">Categorías</h1>
 
         <p className="text-center text-h4 font-bold text-primary-dark mb-10">
-          Total {ctx?.activeTab === 0 ? 'gastado' : 'recibido'} en el mes: $1000
+          Total {ctx?.activeTab === 0 ? 'gastado' : 'recibido'} en el mes: $
+          {total}
         </p>
         <div
           style={{

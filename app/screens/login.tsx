@@ -63,7 +63,7 @@ export function LogInScreen() {
           id="signup-form"
           className="flex flex-col mt-6"
         >
-          <div className="flex flex-col gap-5 mb-3">
+          <div className="flex flex-col gap-5 mb-14">
             {logInFields.map((field) => (
               <TextInput
                 key={field.name}
@@ -76,9 +76,9 @@ export function LogInScreen() {
               />
             ))}
           </div>
-          <p className="mb-10 text-body font-bold text-primary-darker text-right">
+          {/*<p className="mb-10 text-body font-bold text-primary-darker text-right">
             Olvide mi contraseña
-          </p>
+          </p>*/}
 
           <Button
             id="signup-button"
