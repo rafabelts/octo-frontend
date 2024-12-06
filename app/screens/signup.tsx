@@ -8,6 +8,7 @@ import { signUpSchema } from '~/form-validators';
 import { BackButton } from '~/components/back-button';
 import { registerUser } from '~/services/auth';
 import { useNavigate } from '@remix-run/react';
+import { toast, Toaster } from 'sonner';
 
 export function SignUpScreen() {
   const navigate = useNavigate();
@@ -56,7 +57,9 @@ export function SignUpScreen() {
     const userId = await registerUser(data);
     if (userId) {
       sessionStorage.setItem('user_id', userId);
-      navigate('/finance');
+      navigate('/');
+    } else {
+      toast.error('Error al crear usuario');
     }
   };
 
@@ -99,6 +102,7 @@ export function SignUpScreen() {
             fontColor="text-neutral-light"
             fontSize="text-title1"
           />
+          <Toaster />
         </form>
       </main>
     </div>

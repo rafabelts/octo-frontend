@@ -8,7 +8,7 @@ import { logInSchema } from '~/form-validators';
 import { BackButton } from '~/components/back-button';
 import { logIn } from '~/services/auth';
 import { useNavigate } from '@remix-run/react';
-import { useEffect } from 'react';
+import { toast, Toaster } from 'sonner';
 
 export function LogInScreen() {
   const navigate = useNavigate();
@@ -43,7 +43,9 @@ export function LogInScreen() {
     const userId = await logIn(data);
     if (userId) {
       sessionStorage.setItem('user_id', userId);
-      navigate('/finance');
+      navigate('/');
+    } else {
+      toast.error('Error al iniciar sesión');
     }
   };
 
@@ -85,6 +87,7 @@ export function LogInScreen() {
             fontColor="text-neutral-light"
             fontSize="text-title1"
           />
+          <Toaster />
         </form>
       </main>
     </div>

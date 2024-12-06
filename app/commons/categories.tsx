@@ -37,7 +37,7 @@ export function CategoriesScreen() {
   return (
     <div>
       <div className="mt-5 mb-2">
-        <BackButton path="/finance" />
+        <BackButton path="/" />
       </div>
       <main
         style={{

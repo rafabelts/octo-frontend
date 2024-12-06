@@ -8,7 +8,7 @@ export default function SignUp() {
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
     if (userId) {
-      navigate('/finance', { replace: true });
+      navigate('/', { replace: true });
     }
   }, []);
 

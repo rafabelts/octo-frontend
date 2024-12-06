@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { BackButton } from '~/components/back-button';
 import { Button } from '~/components/button';
@@ -94,13 +95,24 @@ export function AddTransactionScreen() {
 
     const parsedId = parseInt(userId);
 
-    await addTransaction(data, type, parsedId, selectedCategory);
+    const createdTransaction = await addTransaction(
+      data,
+      type,
+      parsedId,
+      selectedCategory
+    );
+
+    if (createdTransaction) {
+      navigate('/');
+    } else {
+      toast.error('Error al añadir movimiento');
+    }
   };
 
   return (
     <div>
       <div className="mt-5 mb-2">
-        <BackButton path="/finance" />
+        <BackButton path="/" />
       </div>
 
       <main>

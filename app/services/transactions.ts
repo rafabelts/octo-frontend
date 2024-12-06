@@ -25,10 +25,12 @@ export async function addTransaction(
     console.log(response.body);
 
     if (response.status === 201) {
-      console.log('Transaction added');
+      return true;
     }
+
+    return false;
   } catch {
-    console.error('Error adding transaction');
+    return false;
   }
 }
 

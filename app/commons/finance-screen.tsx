@@ -5,7 +5,7 @@ import { PieGraph } from '~/components/graph';
 import { getUserCategories } from '~/services/categories';
 import { getUserTransactions } from '~/services/transactions';
 import { ResponseOfCategory } from '~/types/category';
-import { ResponseOfTransactions } from '~/types/finance';
+import { ResponseOfTransactions, TransactionData } from '~/types/finance';
 import { filterByType } from '~/utils/filterByType';
 
 export function FinanceScreen({ tab }: { tab: number }) {
@@ -128,15 +128,22 @@ export function FinanceScreen({ tab }: { tab: number }) {
             </h2>
             {
               <ul className="flex flex-col gap-4 mt-2">
-                {transactions.slice(0, 4).map((transaction) => (
-                  <FinanceResumeListItem
-                    key={transaction.transactionId}
-                    categoryIcon={transaction.categoryIcon}
-                    categoryColor={transaction.categoryColor}
-                    name={transaction.title}
-                    total={transaction.amount}
-                  />
-                ))}
+                {transactions
+                  .sort((a, b) => {
+                    const dateA = new Date(a.date).getTime();
+                    const dateB = new Date(b.date).getTime();
+                    return dateB - dateA;
+                  })
+                  .slice(0, 4)
+                  .map((transaction) => (
+                    <FinanceResumeListItem
+                      key={transaction.transactionId}
+                      categoryIcon={transaction.categoryIcon}
+                      categoryColor={transaction.categoryColor}
+                      name={transaction.title}
+                      total={transaction.amount}
+                    />
+                  ))}
               </ul>
             }
           </div>

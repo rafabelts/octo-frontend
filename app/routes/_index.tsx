@@ -1,16 +1,16 @@
-import { redirect, useNavigate } from '@remix-run/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { WelcomeScreen } from '~/screens/welcome';
+import Finance from '../screens/finance';
 
 export default function Index() {
-  const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     const userId = sessionStorage.getItem('user_id');
     if (userId) {
-      navigate('/finance', { replace: true });
+      setLoggedIn(true);
     }
   }, []);
 
-  return <WelcomeScreen />;
+  return !loggedIn ? <WelcomeScreen /> : <Finance />;
 }

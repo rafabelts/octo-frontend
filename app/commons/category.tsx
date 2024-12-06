@@ -89,22 +89,22 @@ export default function CategoryScreen() {
         <p className="text-title1 text-neutral-normal font-semibold">
           Resumen:
         </p>
-        {transactions.length === 0 ? (
-          <p>No se han realizado movimientos</p>
-        ) : (
-          <div className="flex flex-col gap-5 mt-2">
-            {transactions.map((transaction: ResponseOfTransactions) => (
-              <div
-                key={transaction.transactionId}
-                className="flex flex-row justify-between"
-              >
-                <p>{transaction.title}</p>
-                <p>{new Date(transaction.date).toLocaleDateString('es-MX')}</p>
-                <p>{`$${transaction.amount}`}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-col gap-5 mt-2">
+          {transactions.map((transaction: ResponseOfTransactions) => (
+            <div
+              key={transaction.transactionId}
+              className="flex flex-row justify-between"
+            >
+              <p>{transaction.title}</p>
+              <p>
+                {transaction.date
+                  ? new Date(transaction.date).toLocaleDateString('es-MX')
+                  : ''}
+              </p>
+              <p>{`$${transaction.amount}`}</p>
+            </div>
+          ))}
+        </div>
       </main>
     );
   } else {
@@ -120,7 +120,12 @@ export default function CategoryScreen() {
       <div className="mt-5 mb-2">
         <BackButton path="/finances/categories" />
       </div>
-      {content}
+
+      {transactions.length === 0 ? (
+        <p className="p-10">No se han realizado movimientos</p>
+      ) : (
+        content
+      )}
     </div>
   );
 }
